@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "通过MAC地址连续扫描指定的客户端",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "追踪",
+    "version": "1.0",
+    "index": 4
+}

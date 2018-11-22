@@ -1,0 +1,65 @@
+<div ng-controller="CollectorController">
+	<!--Title-->
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">收集器</h4>
+		</div>
+	</div>
+	<div class="well well-sm">
+		在开始扫描之前，您需要设置网卡处于监控模式。日志可以在日志管理模块查看。
+	</div>
+	<div class="row">
+
+		<!--Interfaces panel-->
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">接口</span></h4>
+				</div>
+					<div class="panel-body">
+						<form>
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon input-sm">接口</span>
+									<select class="form-control input-sm" ng-model="selectedInterface">
+										<option ng-repeat="interface in interfaces">{{ interface }}</option>
+									</select>
+									<span class="input-group-btn">
+										<button class="btn btn-{{startMonLabel}} btn-sm" ng-disabled="startingMon" ng-click="startMonitor()">{{startMon}}</button>
+									</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon input-sm">监控</span>
+									<select class="form-control input-sm" ng-disabled="monitors.length == 0" ng-model="selectedMonitor">
+										<option ng-repeat="monitor in monitors">{{ monitor }}</option>
+									</select>
+									<span class="input-group-btn">
+										<button class="btn btn-{{stopMonLabel}} btn-sm" ng-disabled="stoppingMon || monitors.length == 0" ng-click="stopMonitor()">{{stopMon}}</button>
+									</span>
+								</div>
+							</div>
+						</form>
+					</div>
+			</div>
+		</div>
+
+		<!--Scan panel-->
+		<div ng-show="monitors.length > 0">
+			<div class="col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">控制 <span ng-show="scanning" class="text-danger pull-right">扫描中..</span></h3>
+					</div>
+					<div class="panel-body">
+						<div class="btn-group" role="group" aria-label="...">
+							<button type="button" class="btn btn-default" ng-disabled="scanning" ng-click="startScan()">扫描</button>
+							<button type="button" class="btn btn-default" ng-disabled="!scanning" ng-click="stopScan()">停止扫描</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

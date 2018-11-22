@@ -1,0 +1,6 @@
+{
+    "title": "DNSMasq欺骗",
+    "version": "1.0",
+    "author": "Whistle Master",
+    "description": "使用DNSMasq伪造对任意DNS查询的回复"
+}

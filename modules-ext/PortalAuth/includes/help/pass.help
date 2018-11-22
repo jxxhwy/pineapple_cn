@@ -1,0 +1,5 @@
+<strong>Portal认证Shell服务器v1.0</strong><br />
+<p>
+这段python脚本用于侦听来自网络客户端Payload的连接，成功建立连接后，受控系统的IP地址、端口、主机名和操作系统类型将会记录在与targetlog变量关联的文件中，activitylog变量保存文件的位置，其中存储有关服务器活动的各种消息。
+<br /><br />
+lhost和lport变量包含服务器将监听的IP地址和端口号，lhost应该始终是Pineapple的地址，而lport可以是系统上的任何可用端口。 如果服务器上的lport更改了，请确保也要更改网络客户端中的rport变量。 修改脚本后，只需单击“保存”即可启动服务器。

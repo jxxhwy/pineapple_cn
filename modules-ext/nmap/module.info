@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "安全扫描工具nmap的图形化工具",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "nmap",
+    "version": "1.6"
+}

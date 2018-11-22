@@ -1,0 +1,6 @@
+{
+    "title": "自动SSH连接",
+    "description": "持久化SSH连接",
+    "version": "1.2",
+    "author": "audibleblink"
+}

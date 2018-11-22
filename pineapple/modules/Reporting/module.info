@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "按指定的间隔生成报告",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "报表",
+    "version": "1.1",
+    "index": 9
+}

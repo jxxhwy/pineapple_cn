@@ -1,0 +1,24 @@
+<strong>Portal名称</strong><br />
+门户网站归档目录中克隆portal的名称。<strong>不能包含任何空格！</strong>
+<br /><br />
+
+<strong>注射集</strong><br />
+要注入到克隆Portal的代码集合。
+<br /><br />
+
+<strong>Payloads</strong><br />
+此选项仅在选择了Payloader注入集时可见。<br />
+选择一个payload发送到被捕获的不同类型目标操作系统Portal，如果您没有选择有效载荷，那么目标将会下载默认有效负载。例如，如果您没有为OS X系统选择一个有效Payload，同时您的默认有效负载设置为Windows，那么当一个Mac终端连接到您的强制Portal时，那么它将会下载您指定的Windows作为有效Payload。如果只为一个操作系统分配了一个有效负载，则会自动进成为默认Payload。
+<br /><br />
+
+<strong>分离和注入</strong><br />
+选中这些复选框以修改克隆Portal。<br /><br />
+
+<strong>删除链接:</strong> 从Protal中删除链接，以便目标无法点击页面链接。<br />
+<strong>删除内嵌JS:</strong> 从Protal中删除所有内嵌的JavaScript。<br />
+<strong>删除内嵌CSS:</strong> 从Protal中删除所有内嵌的CSS。<br />
+<strong>删除表单:</strong> 从Protal中删除所有内嵌的表单<br /><br />
+
+<strong>注入JS:</strong> 将选定注入集里的JavaScript注入到Portal中。<br />
+<strong>注入CSS:</strong> 将选定注入集里的CSS注入到Portal中。<br />
+<strong>注入HTML:</strong> 将选定注入集里的HTML注入到Portal中。<br />

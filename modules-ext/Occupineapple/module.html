@@ -1,0 +1,184 @@
+<div class="panel panel-default" ng-controller="Occupineapple_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="Occupineapple_ControlsController">
+            <div class="panel-heading">
+				          <h3 class="panel-title">
+                    控制
+                    <span class="dropdown">
+                        <ul class="dropdown-menu" aria-labelledby="poolDropdown">
+                            <li ng-click="saveAutostartSettings()"><a>保存设置为开机启动</a></li>
+                        </ul>
+                        <button class="btn btn-xs btn-{{saveSettingsLabel}} dropdown-toggle" type="button" id="poolDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                    </span>
+                  </h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+					<tr class="form-inline" ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">mdk3</td>
+						<td style="text-align:right;padding-bottom: .5em;">
+              <select class="form-control input-sm" ng-disabled="starting || status == 'Stop'" ng-model="selectedList">
+                  <option ng-repeat="list in lists">{{ list }}</option>
+              </select>
+              <select class="form-control input-sm" ng-disabled="starting || status == 'Stop'" ng-model="selectedInterface">
+                  <option ng-repeat="interface in interfaces">{{ interface }}</option>
+              </select>
+              <button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting" ng-click="togglemdk3()">{{status}}</button></td>
+					</tr>
+          <tr ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">开机启动</td>
+						<td style="text-align:right;padding-bottom: .5em;">
+							<div class="btn-group">
+								<button ng-click="togglemdk3OnBoot()" class="btn btn-xs btn-{{bootLabelON}}">开</button>
+								<button ng-click="togglemdk3OnBoot()" class="btn btn-xs btn-{{bootLabelOFF}}">关</button>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">卸载依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有依赖项将删除，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="Occupineapple_SettingsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Settings">
+        <h4 class="panel-title">设置</h4>
+    </div>
+    <div id="Settings" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+        <div class="form-group">
+            <div class="btn-group pull-right">
+              <button class="btn btn-{{saveSettingsLabel}} btn-sm" ng-disabled="saving" ng-click="setSettings()">{{saveSettings}}</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">速度</span>
+                  <input type="text" class="form-control input-sm" ng-model="settings.speed" placeholder="每秒发包数">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">信道</span>
+                  <input type="text" class="form-control input-sm" ng-model="settings.channel" placeholder="欺骗AP所在信道">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <div class="checkbox"><label><input type="checkbox" ng-model="settings.adHoc"> 显示为Ad-Hoc</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-model="settings.wepBit"> 设置WEP bit (生成加密网络)</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-model="settings.wpaTKIP"> 显示为WPA TKIP加密方式</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-model="settings.wpaAES"> 显示为WPA AES加密方式</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-model="settings.validMAC"> 使用OUI数据库中的有效访问点MAC</label></div>
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="Occupineapple_EditorController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Editor">
+        <h4 class="panel-title">编辑</h4>
+    </div>
+    <div id="Editor" class="panel-collapse collapse">
+      <div class="panel-body">
+
+          <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon input-sm">列表</span>
+                <select ng-change="showList()" ng-model="selectedList" class="form-control input-sm">
+                  <option ng-repeat="list in lists">{{ list }}</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon input-sm">名称</span>
+                <input type="text" class="form-control input-sm" ng-disabled="selectedList != '--'" ng-model="listName" placeholder="新列表名称">
+            </div>
+          </div>
+
+          <div class="form-group">
+              <div class="btn-group pull-right">
+                <button class="btn btn-{{saveListLabel}} btn-sm" ng-disabled="saving || listName == ''" ng-click="saveListData()">{{saveList}}</button>
+                <button class="btn btn-{{deleteListLabel}} btn-sm" ng-disabled="deleting || selectedList == '--'" ng-click="deleteListData()">{{deleteList}}</button>
+              </div>
+              <div class="clearfix"></div>
+              <textarea class="form-control" rows="20" ng-model="listData"></textarea>
+          </div>
+
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="Occupineapple_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			自动刷新 <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshOutput()">刷新日志</button><div class="clearfix"></div>
+		<pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>

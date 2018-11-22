@@ -1,0 +1,6 @@
+{
+    "title": "get",
+    "description": "配置客户端通过浏览器支持的浏览器插件",
+    "version": "1.2",
+    "author": "dustbyter"
+}

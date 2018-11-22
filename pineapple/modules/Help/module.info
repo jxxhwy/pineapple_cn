@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "模块使用帮助",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "帮助",
+    "version": "1.1",
+    "index": 14
+}

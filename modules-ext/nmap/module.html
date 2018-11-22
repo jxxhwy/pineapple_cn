@@ -1,0 +1,286 @@
+<div class="panel panel-default" ng-controller="nmap_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="nmap_ControlsController">
+            <div class="panel-heading">
+				<h3 class="panel-title">控制</h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+					<tr ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">nmap</td>
+						<td style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting || $root.command == 'nmap '" ng-click="togglenmap()">{{status}}</button></td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">卸载依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有依赖项将删除，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="nmap_OptionsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Options">
+        <h4 class="panel-title">选项</h4>
+    </div>
+    <div id="Options" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">命令</span>
+                  <input type="text" class="form-control input-sm" ng-model="command" placeholder="nmap命令">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">目标</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="target" placeholder="目标">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">用户配置</span>
+                <select ng-change="update()" ng-model="profile" class="form-control input-sm">
+                  <option>--</option>
+                  <option value="">常规扫描</option>
+                  <option value="-T4 -A -v">强烈扫描</option>
+                  <option value="-sS -sU -T4 -A -v">强烈扫描加UDP</option>
+                  <option value="-p 1-65535 -T4 -A -v">强烈扫描, 所有TCP端口</option>
+                  <option value="-T4 -A -v -Pn">强烈扫描, 不ping</option>
+                  <option value="-sn">Ping扫描</option>
+                  <option value="-T4 -F">快速扫描</option>
+                  <option value="-sV -T4 -O -F --version-light">快速扫描+</option>
+                  <option value="-sn --traceroute">快速traceroute</option>
+                  <option value="-sS -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53">慢速全面扫描</option>
+                </select>
+              </div>
+          </div>
+
+          <div ng-show="profile=='--'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#Scan">扫描</div>
+              <div id="Scan" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm">定时</span>
+                        <select ng-change="update()" ng-model="timing" class="form-control input-sm">
+                          <option>--</option>
+                          <option value="-T0">Paranoid</option>
+                          <option value="-T1">Sneaky</option>
+                          <option value="-T2">Polite</option>
+                          <option value="-T3">Normal</option>
+                          <option value="-T4">Aggresive</option>
+                          <option value="-T5">Insane</option>
+                        </select>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm">TCP扫描</span>
+                        <select ng-change="update()" ng-model="tcp" class="form-control input-sm">
+                          <option>--</option>
+                          <option value="-sA">ACK scan</option>
+                          <option value="-sF">FIN scan</option>
+                          <option value="-sM">Maimon scan</option>
+                          <option value="-sN">Null scan</option>
+                          <option value="-sS">TCP SYN scan</option>
+                          <option value="-sT">TCP connect scan</option>
+                          <option value="-sW">Window scan</option>
+                          <option value="-sX">Xmas Tree scan</option>
+                        </select>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm">非TCP扫描</span>
+                        <select ng-change="update()" ng-model="nontcp" class="form-control input-sm">
+                          <option>--</option>
+                          <option value="-sU">UDP scan</option>
+                          <option value="-sO">IP protocol scan</option>
+                          <option value="-sL">List scan</option>
+                          <option value="-sn">No port scan</option>
+                          <option value="-sY">SCTP INIT port scan</option>
+                          <option value="-sZ">SCTP cookie-echo port scan</option>
+                        </select>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="scanOptions.option1" ng-true-value="'-A'"> 启用所有高级/激进选项</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="scanOptions.option2" ng-true-value="'-O'"> 操作系统探测</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="scanOptions.option3" ng-true-value="'-sV'"> 服务版本探测</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="scanOptions.option4" ng-true-value="'-n'"> 禁用反向DNS解析</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="scanOptions.option5" ng-true-value="'-6'"> IPv6支持</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="profile=='--'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#Ping">Ping</div>
+              <div id="Ping" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="pingOptions.option1" ng-true-value="'-Pn'"> 扫描前不ping</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="pingOptions.option2" ng-true-value="'-PE'"> ICMP ping</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="pingOptions.option3" ng-true-value="'-PP'"> ICMP timestamp request</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="pingOptions.option4" ng-true-value="'-PM'"> ICMP netmask request</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="profile=='--'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#Target">目标</div>
+              <div id="Target" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="targetOptions.option1" ng-true-value="'-F'"> 快速扫描</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="profile=='--'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#Other">其他</div>
+              <div id="Other" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="otherOptions.option1" ng-true-value="'-f'"> Fragment IP packets</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="otherOptions.option2" ng-true-value="'--packet-trace'"> Packet trace</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="otherOptions.option3" ng-true-value="'-r'"> Disable randomizing scanned ports</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="otherOptions.option4" ng-true-value="'--traceroute'"> Trace routes to targets</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="nmap_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			Auto-refresh <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshOutput()">Refresh Scan</button><div class="clearfix"></div>
+		<pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="nmap_HistoryController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#History">
+        <h4 class="panel-title">历史记录 <span class="badge">{{history.length}}</span></h4>
+    </div>
+    <div id="History" class="panel-collapse collapse">
+        <div class="panel-body">
+	        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshHistory()">刷新历史记录</button><div class="clearfix"></div>
+			<div class="table-responsive">
+	            <table class="table table-striped table-bordered table-hover" ng-hide="(history.length == 0)">
+	                <thead>
+	                    <tr>
+	                        <th>时间</th>
+	                        <th>操作</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="entry in history" ng-if="entry != ''">
+	                        <td>{{entry[0]}}</td>
+	                        <td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-fixed-length btn-sm btn-default" data-toggle="modal" data-target="#historyModal" ng-click="viewHistory(entry[1])">查看</button>
+									<button type="button" class="btn btn-sm btn-default" ng-click="downloadHistory(entry[1])">下载</button>
+                  <button type="button" class="btn btn-fixed-length btn-sm btn-danger" ng-click="deleteHistory(entry[1])">删除</button>
+								</div>
+							</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+			<div class="well" ng-show="(history.length === 0)">无历史记录...</div>
+        </div>
+    </div>
+
+	<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="historyModalLabel">查看历史记录 - {{historyDate}}</h4>
+	      </div>
+	      <div class="modal-body">
+	      <pre class="scrollable-pre log-pre">{{historyOutput}}</pre>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>

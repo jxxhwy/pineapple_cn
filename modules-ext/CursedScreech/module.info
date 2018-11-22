@@ -1,0 +1,10 @@
+{
+    "author": "sud0nick",
+    "description": "安全地控制受损系统",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "CursedScreech",
+    "version": "1.4"
+}

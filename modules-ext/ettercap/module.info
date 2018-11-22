@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "使用ettercap执行中间人攻击",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "ettercap",
+    "version": "1.5"
+}

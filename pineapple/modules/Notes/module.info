@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "标注客户端和AP接入点信息",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "标注",
+    "version": "1.0",
+    "index": 13
+}

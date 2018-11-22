@@ -1,0 +1,303 @@
+<div class="panel panel-default" ng-controller="tcpdump_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="tcpdump_ControlsController">
+            <div class="panel-heading">
+				<h3 class="panel-title">控制</h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+					<tr ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">tcpdump</td>
+						<td style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting" ng-click="toggletcpdump()">{{status}}</button></td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">移除依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项将要卸载，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。移除成功后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="tcpdump_OptionsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Options">
+        <h4 class="panel-title">选项</h4>
+    </div>
+    <div id="Options" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">命令</span>
+                  <input type="text" class="form-control input-sm" ng-model="command" placeholder="tcpdump命令">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">接口</span>
+                  <select ng-change="update()" ng-model="selectedInterface" class="form-control input-sm">
+                      <option>--</option>
+                      <option ng-repeat="interface in interfaces">{{ interface }}</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">详细程度</span>
+                <select ng-change="update()" ng-model="verbose" class="form-control input-sm">
+                  <option>--</option>
+                  <option value="-v">详细</option>
+                  <option value="-vv">非常详细</option>
+                  <option value="-vvv">非常非常详细</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">解析</span>
+                <select ng-change="update()" ng-model="resolve" class="form-control input-sm">
+                  <option>--</option>
+                  <option value="-n">不解析主机</option>
+                  <option value="-nn">不解析主机名或端口</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">时间戳</span>
+                <select ng-change="update()" ng-model="timestamp" class="form-control input-sm">
+                  <option>--</option>
+                  <option value="-t">不要在每行上打印时间戳</option>
+                  <option value="-tt">在每行上打印未格式化的时间戳</option>
+                  <option value="-ttt">在当前行和上一行之间打印增量信息（微秒）</option>
+                  <option value="-tttt">在每行上按日期打印默认格式的时间戳</option>
+                  <option value="-ttttt">在当前行和第一行之间打印增量信息（微秒）</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option1" ng-true-value="'-N'"> 不打印主机的域名</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option2" ng-true-value="'-X'"> 以十六进制和ASCII格式显示数据包的内容</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option3" ng-true-value="'-S'"> 打印绝对序列号</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option4" ng-true-value="'-e'"> 获取以太网头</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option5" ng-true-value="'-q'"> 显示较少的协议信息</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="dumpOptions.option6" ng-true-value="'-I'"> 监控模式</label></div>
+              </div>
+          </div>
+
+          <div class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#Filter">Filter</div>
+              <div id="Filter" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form-group">
+                      <div class="input-group">
+                          <span class="input-group-addon input-sm">过滤器</span>
+                          <input ng-change="update()" type="text" class="form-control input-sm" ng-model="filter" placeholder="过滤">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">类型</span>
+                      <div class="btn-group">
+                      	<button class="btn btn-default btn-sm" ng-click="appendFilter('host')">主机</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('net')">网络</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('portrange')">端口范围</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('port')">端口</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('gateway')">网关</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('mask')">掩码</button>
+          			      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">Dir</span>
+                      <div class="btn-group">
+                      	<button class="btn btn-default btn-sm" ng-click="appendFilter('src')">源</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('dst')">目标</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('src or dst')">源或目标</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('src and dst')">源和目标</button>
+          			      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">协议</span>
+                      <div class="btn-group">
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('ip')">ip</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('proto')">proto</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('icmp')">icmp</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('tcp')">tcp</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('udp')">udp</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('arp')">arp</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('ether')">ether</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('http')">http</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('ftp')">ftp</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('smtp')">smtp</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">长度</span>
+                      <div class="btn-group">
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('less')">较少</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('greater')">最大</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">分类</span>
+                      <div class="btn-group">
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('broadcast')">广播</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('multicast')">组播</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <span class="input-group-addon input-sm">操作符</span>
+                      <div class="btn-group">
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('not')">not</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('and')">and</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('or')">or</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('\(')">(</button>
+                        <button class="btn btn-default btn-sm" ng-click="appendFilter('\)')">)</button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="tcpdump_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			Auto-refresh <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="btn-group pull-right">
+          <button class="btn btn-primary btn-sm" ng-click="refreshOutput()">刷新日志</button>
+          <button class="btn btn-danger btn-sm" ng-click="clearOutput()">清除日志</button>
+        </div>
+        <div class="clearfix"></div>
+		<pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="tcpdump_HistoryController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#History">
+        <h4 class="panel-title">历史记录 <span class="badge">{{history.length}}</span></h4>
+    </div>
+    <div id="History" class="panel-collapse collapse">
+        <div class="panel-body">
+	        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshHistory()">刷新历史记录</button><div class="clearfix"></div>
+			<div class="table-responsive">
+	            <table class="table table-striped table-bordered table-hover" ng-hide="(history.length == 0)">
+	                <thead>
+	                    <tr>
+	                        <th>日期</th>
+	                        <th>操作</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="entry in history" ng-if="entry != ''">
+	                        <td>{{entry[0]}}</td>
+	                        <td>
+								<div class="btn-group">
+                  <button type="button" class="btn btn-fixed-length btn-sm btn-default" data-toggle="modal" data-target="#historyModal" ng-click="viewHistory(entry[1])">查看</button>
+                  <button type="button" class="btn btn-sm btn-default" ng-click="downloadHistory(entry[1])">下载</button>
+									<button type="button" class="btn btn-fixed-length btn-sm btn-danger" ng-click="deleteHistory(entry[1])">删除</button>
+								</div>
+							</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+			<div class="well" ng-show="(history.length === 0)">无历史记录...</div>
+        </div>
+    </div>
+
+	<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="historyModalLabel">查看历史记录 - {{historyDate}}</h4>
+	      </div>
+	      <div class="modal-body">
+	      <pre class="scrollable-pre log-pre">{{historyOutput}}</pre>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>

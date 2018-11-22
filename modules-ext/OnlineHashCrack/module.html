@@ -1,0 +1,147 @@
+<div class="panel panel-default" ng-controller="OnlineHashCrack_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="OnlineHashCrack_ControlsController">
+            <div class="panel-heading">
+				<h3 class="panel-title">控制</h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">卸载依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项将要卸载，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。移除成功后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+    </div>
+</div>
+
+<div ng-show="$root.status.installed" class="well">注意: 哈希和握手包将发送到<strong>www.onlinehashcrack.com</strong> WEB服务。</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="OnlineHashCrack_SettingsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Settings">
+        <h4 class="panel-title">设置</h4>
+    </div>
+    <div id="Settings" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+        <div class="form-group">
+            <div class="btn-group pull-right">
+              <button class="btn btn-{{saveSettingsLabel}} btn-sm" ng-disabled="saving" ng-click="setSettings()">{{saveSettings}}</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">邮箱</span>
+                  <input type="text" class="form-control input-sm" ng-model="settings.email" placeholder="通知邮箱">
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="OnlineHashCrack_HashController">
+	<div class="panel-heading">
+        <h4 class="panel-title">密码/哈希破解</h4>
+    </div>
+    <div class="panel-body">
+
+      <div class="form-group">
+          <div class="input-group">
+              <span class="input-group-addon input-sm">哈希</span>
+              <textarea class="form-control input-sm" ng-model="hashes" rows="5" placeholder="最多10个哈希，每行一个哈希值。"></textarea>
+          </div>
+      </div>
+
+      <button type="submit" class="btn btn-{{submitHashLabel}} btn-sm" ng-disabled="working || (hashes == '')" ng-click="submitHashOnline()">{{submitHash}}</button>
+
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="OnlineHashCrack_WPAController">
+	<div class="panel-heading">
+        <h4 class="panel-title">WiFi WPA破解</h4>
+    </div>
+    <div class="panel-body">
+
+      <div class="form-group">
+          <div class="input-group">
+              <span class="input-group-addon input-sm">文件</span>
+              <select class="form-control input-sm" ng-model="selectedFile">
+                  <option>--</option>
+                  <option ng-repeat="file in files">{{ file }}</option>
+              </select>
+          </div>
+      </div>
+
+      <div ng-hide="selectedFile != '--'" class="form-group">
+          <div class="input-group">
+              <span class="input-group-addon input-sm">文件路径</span>
+              <input type="text" class="form-control input-sm" ng-model="file" placeholder="握手包文件路径 (*.cap or *.pcap or *.hccap). 最大10Mb。">
+          </div>
+      </div>
+
+      <button type="submit" class="btn btn-{{submitWPALabel}} btn-sm" ng-disabled="working || (file == '' && selectedFile == '--')" ng-click="submitWPAOnline()">{{submitWPA}}</button>
+
+    </div>
+</div>
+
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="OnlineHashCrack_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title">输出</h4>
+    </div>
+    <div class="panel-body">
+      <div class="btn-group pull-right">
+        <button class="btn btn-danger btn-sm" ng-click="clearOutput()">清除日志</button>
+      </div>
+      <div class="clearfix"></div>
+      <pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>

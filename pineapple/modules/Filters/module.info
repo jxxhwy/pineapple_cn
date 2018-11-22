@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "过滤器",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "过滤器",
+    "version": "1.0",
+    "index": 5
+}

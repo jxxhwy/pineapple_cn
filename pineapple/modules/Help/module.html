@@ -1,0 +1,421 @@
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#FeedbackHelp" data-parent="#accordion">
+            <h4 class="panel-title">反馈和支持</h4>
+        </div>
+        <div id="FeedbackHelp" class="panel-collapse collapse in" ng-controller="DebugController">
+            <div class="panel-body">
+                <p>
+                    wifipineapple不仅仅是一个硬件或是软件 - 它是一个有用的渗透测试人员和IT专业人员社区的所在地。欢迎大家！
+                </p>
+
+                <p>
+                    <a href="https://www.wifipineapple.com/forum">论坛</a>是分享反馈和想法的好地方。您还可以找到社区支持和讨论以及模块，教程和固件版本。请务必使用搜索功能查找常见问题的答案。
+
+                </p>
+
+                <p>
+                    找到一个bug? 如果尚未报告，则鼓励您报告它以及在<a href="https://www.wifipineapple.com/bugs">bug跟踪</a>中重现问题的详细步骤。
+                </p>
+
+                <p>
+                    寻找一些其他非正式的东西？ IRC频道是一群充满热情的wifipineapple爱好者的家园。在irc.hak5.org上加入irc.hak5.org的#pineapple - 但要注意其所表达的观点不代表Hak5或WiFi Pineapple团队的观点。
+                </p>
+
+                <p>
+                    报告问题的一些提示：
+                    <ul>
+                        <li>搜索<a href="https://www.wifipineapple.com/bugs">bug跟踪</a>和<a href="https://www.wifipineapple.com/forum">论坛</a>，看看它是否已被报告。如果问题未得到解决，分享您的经验可能有助于制定补救措施。</li>
+                        <li>分享您的配置。主机操作系统，Web浏览器和版本，WiFi Pineapple固件版本以及您的特定网络设置都是重要的共享因素。尽可能的详细。</li>
+                        <li>描述如何逐步重现问题。这对于诊断任何问题都非常重要。</li>
+                        <li>尽可能提供日志。例如：“dmesg”，“lsusb”，“iwconfig”，“ifconfig -a”，“cat /etc/config/wireless”等命令输出，这些在诊断问题时非常有用。</li>
+                        <li>当然还要有礼貌</li>
+                    </ul>
+                </p>
+                <p class="text-center">
+                    <button class="btn btn-default btn-xs" ng-click="generateDebugFile()" ng-hide="loading">下载调试文件</button>
+                    <div class="text-center" ng-show="loading">
+                        <img src="img/throbber.gif">
+                        <div>正在生成调试文件。完成后可以开始下载。</div>
+                    </div>
+                    <h5 class="panel-title" ng-show="debugStarted">处理过程</h5>
+                    <p>
+                        <textarea id="output" ng-show="debugStarted" id="debugGenerationOutput" class="form-control autoselect" rows="15" ng-model="output" readonly></textarea>
+                    </p>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#DashboardHelp" data-parent="#accordion">
+            <h4 class="panel-title">仪表盘</h4>
+        </div>
+        <div id="DashboardHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    仪表板提供设备运行状态，登录页面浏览器统计信息，通知和公告的概览视图。
+                </p>
+                <p>
+                    <b>登陆页面浏览器统计信息</b>当从配置管理中启用登录页面后，将会显示终端对应的Web浏览器型号。 <b>通知</b> 会显示来自模块的通知信息。 <b>公告</b>功能是从wifipineapple.com站点获取最新的项目信息。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer collapsed" data-toggle="collapse" data-target="#ReconHelp" data-parent="#accordion">
+            <h4 class="panel-title">侦查</h4>
+        </div>
+        <div id="ReconHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    与传统wifi审计仅仅是被动地接收AP发出的信标帧(beacons)，来描绘WiFi范围附近的场景不同，侦查功能更进了一步。
+                </p>
+                <p>
+                    通过结合所监控信道中的信标帧和数据活动，侦查模块通过将AP接入点与各自的终端相结合，描绘出更完整的图像。通过这种方式显示WiFi环境，测试人员可以快速识别网络环境中的潜在目标并立即采取有效措施。
+                </p>
+                <p>
+                    侦查模块允许审计扫描附近的AP接入点和终端。通过嗅探活动的流量来识别客户端，并按AP接入点进行归纳显示。如果客户端与AP访问点是未关联的，则它可能不会出现在列表中。从下拉列表增加扫描持续时间允许嗅探器在每个通道上看到更多潜在的流量。
+                    以蓝色字体显示的终端或AP接入点表示由本地来分配给相应设备的MAC地址，可能的原因：MAC随机化、欺骗、厂商提供了未向IEEE注册机构注册的MAC地址。MAC斜体表示已在标记模块中已保存了信息。
+                </p>
+                <p>
+                    AP接入点的SSID，MAC，安全性，信道和信号会显示在表格视图中，客户端仅列出MAC地址。
+                </p>
+                <p>
+                    单击MAC地址旁边的菜单按钮会显示一个菜单，提供了类似于过滤器模块或跟踪模块中添加或删除MAC的按钮功能。
+                    打开此菜单将自动在OUI数据库中查找已下载的MAC地址。为了下载OUI数据库，设备或Web浏览器必须具有接入到互联网。
+                    Deauth攻击可以来发送多次解除身份验证帧数据包给终端。乘数为2表示发送认证帧数是乘数1的两倍。当扫描处于活动状态时（例如：未停止或暂停），菜单按钮被禁用。
+                </p>
+                <p>
+                    单击SSID旁边的菜单按钮会显示一个菜单，提供了PineAP池或过滤器模块中添加或删除SSID的功能。
+                    Deauth攻击可以发送多次deauthentication帧发送到PineAP当前已识别的所有关联终端。乘数2是解除认证帧乘数为1的两倍。
+                </p>
+                <p>
+                    单击企业AP的克隆功能可以复制出一个企业AP功能，以便模拟AP，用来捕获客户端和凭证数据。
+                </p>
+                <p>
+                    未关联的终端会MAC地址单独列出。这些终端正常工作，但并没有与AP接入点发生关联。
+                </p>
+                <p>
+                    超出WIFI覆盖范围的终端也会单独列出，同时会显示它们与其AP接入点之间的关系。
+                </p>
+                <p>
+                    当扫描持续时间设置为“连续”时，扫描将会一直运行下去，直到用户停止扫描。选中“存活”复选框“则会启用侦查和存活状态的结果流。
+                    websocket每五秒将新扫描到的数据推送到Web界面，提供无线环境的实时展示。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#ClientHelp" data-parent="#accordion">
+            <h4 class="panel-title">客户端管理</h4>
+        </div>
+        <div id="ClientHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    如果在PineAP中已勾选中“允许关联”，则设备将允许客户端进行连接。已连接的客户端将在“客户端”视图中列出它们各自的MAC地址，IP地址，它们已连接的SSID（如果在PineAP中启用了日志探测）和主机名。如果SSID或主机名不可用也会如实显示。
+                </p>
+                <p>
+                    踢下线按钮允许WIFI审计者让客户端从网络中下线。
+                </p>
+                <p>
+                    单击MAC地址旁边的菜单按钮会显示一个菜单，提供类似与过滤器模块或跟踪模块中的添加或删除MAC功能。
+                </p>
+                <p>
+                    单击SSID旁边的菜单按钮会显示一个菜单，提供用于在PineAP池或过滤器模块中的添加或删除SSID的按钮功能。
+                </p>
+                <p>
+                    单击“刷新”按钮可以实时更新“客户端”表。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#FiltersHelp" data-parent="#accordion">
+            <h4 class="panel-title">过滤器</h4>
+        </div>
+        <div id="FiltersHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    可以通过终端MAC地址或SSID来执行过滤。支持“拒绝”和“允许”两种模式，通过切换按钮来切换此选项。
+                </p>
+                <p>
+                    <b>终端过滤</b><br/>
+                    在拒绝模式下，终端过滤器中列出的那些MAC地址的终端将无法连接到设备。在“允许模式”下，只有终端过滤器中列出的MAC地址的终端才能连接。
+                    当审计时，最好使用“允许模式”以确保仅能参与的终端。
+                </p>
+                <p>
+                    也可以在侦查或客户端管理模块中从列表相关联的菜单按钮添加终端MAC地址和SSID。
+                </p>
+                <p>
+                    <b>SSID过滤</b><br/>
+                    在拒绝模式下，如果终端尝试连接到过滤器中列出的SSID，则客户端将无法与设备关联。在允许模式下，
+                    如果过滤器中列出了他们尝试连接的SSID，则客户端只能与设备相关联。
+                </p>
+                <p>
+                    SSID也可以在侦查模块中列表相关联的菜单按钮添加到过滤器中。
+                </p>
+                <p>
+                    <b>管理过滤器</b><br/>
+                    过滤的客户端和SSID将显示在列表中。可以使用文本输入字段和“添加”按钮手动将终端MAC地址和SSID添加到列表中。
+                    在文本框中单击终端MAC或SSID，该项文本内容将会被填充到输入字段，单击“删除”将从“筛选”列表中删除该条目。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#PineAPHelp" data-parent="#accordion">
+            <h4 class="panel-title">PineAP</h4>
+        </div>
+        <div id="PineAPHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    PineAP是一个非常有用的模块化模拟AP接入点套件，旨在通过完全模拟AP接入点（包括企业AP）首选网络来帮助WiFi审计者收集客户端信息。当作为企业AP时，它可以捕获客户端和凭证。
+                </p>
+                <p>
+                    <b>允许关联</b> - 启用后，将允许终端设备通过任何请求的SSID与设备关联。例如：如果终端设备发送一个“example”的历史SSID的probe探测请求，设备则会确认该请求，响应并允许终端设备关联并连接到设备网络。此项功能与终端管理和SSID筛选结合使用。被过滤器禁止的SSID关联的终端将无法与设备关联，被过滤器阻止的MAC的终端也将无法与设备关联。禁用后，将不允许客户端关联，以前的名字叫Karma。
+                </p>
+                <p>
+                    <b>PineAP守护程序</b> - 必须启用此守护程序才能使用这些功能：记录PineAP事件功能、终端连接通知、终端断开通知，信标帧响应，捕获SSID到池以及广播SSID池功能。PineAP守护程序将根据源和目标MAC设置以及信标帧响应和SSID广播间隔协调相应的操作。此功能需要用到wlan1接口，如果wlan1接口已经使用了，则无法与WiFi终端模式一起使用。必须启用PineAP守护程序，并且必须先保存PineAP设置，然后才能使用相关功能。
+                </p>
+                <p>
+                    <b>PineAP自启动</b>- 启用后，PineAP守护程序将在启动时自动运行。
+                </p>
+                <p>
+                    <b>记录PineAP事件</b> - 启用后，将记录终端设备探测请求、客户端关联和解除关联。此功能为“日志记录”视图提供分析信息。如果禁用，日志则不会记录关联，也不会在“客户端”视图的SSID列中显示关联信息。
+                </p>
+                <p>
+                    <b>客户端连接通知</b>- 启用后，WiFi审计者将在终端连接到设备时收到通知。
+                </p>
+                <p>
+                    <b>客户端断开连接通知</b>>- 启用后，WiFi审计者将在终端与设备断开连接时收到通知。
+                </p>
+                <p>
+                    <b>SSID捕获到池</b> - 启用后，嗅探会将捕获到的探测请求中的SSID数据保存到SSID池。此被动功能对广播SSID池功能有用，SSID池也可以手动管理。
+                </p>
+                <p>
+                    <b>Beacon帧响应</b> - 启用后，针对信标帧将会响应具有适当SSID的探测请求，表示终端设备已经收到请求。这些信标帧不会被传输到广播，而是专门针对发出探测请求的设备，这可以防止信标帧对其他设备可见。如果启用了“允许关联”同时终端设备与设备关联上了，则针对信标响应帧将继续传输到客户端设备一段时间。信标响应将使用源MAC设置，该设置也与广播SSID池功能共享。信标响应间隔将决定它们的传输速度。
+                </p>
+                <p>
+                    <b>广播SSID池</b> - 启用后，SSID池将以指定的间隔使用源MAC和目标MAC设置作为信标进行广播。以前名称叫Dogma。
+                </p>
+                <p>
+                    <b>广播SSID池间隔</b> - 指定从池广播SSID的间隔。如果选择积极的选项则需要更多的CPU占用，最低选项则占用CPU资源最小。
+                </p>
+                <p>
+                    <b>Beacon帧响应间隔 </b> - 指定发送信标帧响应的间隔。如果选择积极的选项则需要更多的CPU占用，最低选项则占用CPU资源最小。
+                </p>
+                <p>
+                    <b>源MAC</b> - 默认情况下，是设备上wlan0接口的MAC地址，这是可以允许关联的接口，并且还托管管理AP访问点。可以在网络管理模块中更改wlan0的MAC地址。如果需要的话，可以将该MAC地址设置为次要设备。
+                </p>
+                <p>
+                    <b>目标MAC</b> - 默认情况下，是广播MAC地址FF：FF：FF：FF：FF：FF。传输到广播的帧将会被附近的所有终端设备看到。设置终端MAC地址将针对单个设备上的PineAP功能。与信标帧响应类似，目标终端设备只能看到来自池的SSID广播。与过滤结合使用时，此功能可实现精确的设备定位。
+                </p>
+                <p>
+                    <b>SSID池</b> - 当“捕获SSID池”功能启用时将会自动填充。也可以使用文本字段和“添加”按钮手动添加。同样，单击已列出的SSID时，内容将会被填充到文本字段，然后允许使用“删除”按钮删除条目。在SSID池菜单中，可以下载SSID池下载数据库中的SSID列表，也可以清除SSID池删除所有条目。
+                </p>
+                    <b>Pine企业AP</b>
+                    <ul>
+                        <li>
+                            <b>下拉菜单</b>-
+                            <ul>
+                                <li>
+                                    <b>清除证书</b>- 清除已生成用于企业网络的SSL证书。
+                                </li>
+                                <li>
+                                    <b>下载凭证(JTR Format)</b>- 以John the Ripper格式下载所有捕获的MSCHAPv2凭据，以便轻松破解。
+                                </li>
+                                <li>
+                                    <b>下载凭证(Hashcat Format)</b>- 以Hashcat格式下载所有捕获的MSCHAPv2凭据，以便轻松破解。
+                                </li>
+                            </ul> 
+                        <li>
+                            <b>启用</b> - 启用企业凭证捕获功能。
+                        </li>
+                        <li>
+                            <b>启用直通</b>- 在企业网络上启用身份验证直通。
+                        </li>
+                        <li>
+                            <b>企业SSID</b>- 企业网络的SSID。
+                        </li>
+                        <li>
+                            <b>企业MAC</b>- 企业网络的BSSID。
+                        </li>
+                        <li>
+                            <b>加密类型</b>- 企业网络使用的加密类型，可以设置为WPA和WPA2版本以及CCMP和TKIP密码套件的任意组合。
+                        </li>
+                        <li>
+                            <b>降级攻击</b>- 指定是否应启用降级攻击以及是否降级到GTC（通过隧道明文身份验证）或MSCHAPv2（使用弱哈希算法）。
+                        </li>
+                    </ul>
+                <p>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#TrackingHelp" data-parent="#accordion">
+            <h4 class="panel-title">追踪</h4>
+        </div>
+        <div id="TrackingHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    追踪功能连续扫描追踪列表当中指定的MAC地址的终端，并执行可自定义的跟踪脚本。此功能需要启用PineAP的日志探测或日志关联功能。
+                </p>
+                <p>
+                    可以使用文本字段和添加按钮手动指定终端，也可以在客户端管理或PineAP管理模块中关联的MAC地址的追踪，通过添加MAC按钮添加到客户端跟踪列表中。
+                </p>
+                <p>
+                    当终端探测请求或关联被日志记录时，将会执行自定义的跟踪脚本。跟踪脚本定义客户端MAC地址，SSID以及SSID与客户端相关的标识类型（探测或关联）。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#LoggingHelp" data-parent="#accordion">
+            <h4 class="panel-title">日志</h4>
+        </div>
+        <div id="LoggingHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    “日志记录”模块主要显示PineAP日志、系统日志、Dmesg和报表日志。
+                </p>
+                <p>
+                    <b>PineAP日志</b> - 如果启用了日志探测或日志关联选项，则会按时间顺序来显示PineAP事件。每个事件都包含：时间戳，事件类型（probe请求或关联），终端设备MAC地址以及设备probe探测或关联的SSID。
+                </p>
+                <p>
+                    <b>PineAP日志过滤</b><br/>
+                    “显示Probes帧和显示(De)Associations帧”复选框用以切换“Probes(探测帧)”或“Associations(关联帧)”是否显示。“去除重复”复选框选中后将会去除任何重复的条目。例如，某个终端在1小时内发送了10次SSID名称为“example”的探测请求，则选中“去除重复”框后列表将仅仅显示第一个条目。
+                </p>
+                <p>
+                    可以通过MAC地址和SSID文本框输入条件来过滤显示结果。例如：如果在MAC文本字段中输入de:ad:be:ef:c0:fe，则只有该终端设备活动才会显示在PineAP日志中。MAC和SSID过滤也支持正则表达式。
+                </p>
+                <p>
+                    在按下“应用过滤”按钮前，过滤条件不会生效。清除过滤将会重置为默认值并显示所有捕获的数据，刷新日志将从PineAP获取最新的日志数据，而清除日志将清空日志文件。默认情况下，PineAP日志数据保存在/tmp目录中，设备重启后数据将会丢失。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#ReportingHelp" data-parent="#accordion">
+            <h4 class="panel-title">报表</h4>
+        </div>
+        <div id="ReportingHelp" class="panel-collapse collapse" ng-controller="HelpController">
+            <div class="panel-body">
+                <p>
+                    此功能可以指定间隔来生成报告，报告可以通过电子邮件发送，也可以本地保存到SD卡上。请参考高级模块里USB菜单中的格式化SD卡选项来设置新卡。必须先完成电子邮件配置才能让“通过邮件发送报表”功能生效。
+                </p>
+                <p>
+                    报告内容包含:PineAP日志、完成报告后清除的选项、类似于侦查的现场调查，可以指定AP和客户端扫描持续时间，以及客户端probe探测和客户端跟踪报表。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#NetworkingHelp" data-parent="#accordion">
+            <h4 class="panel-title">网络管理</h4>
+        </div>
+        <div id="NetworkingHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    在网络管理模块视图中，审计者可以更改路由表，AP接入点，MAC地址，主机名，并使用WiFi客户端模式连接到AP接入点，让设备本身接入到互联网，还包含一个OUI库查询工具。
+                </p>
+                <p>
+                    <b>路由表</b> - 显示内核IP路由表，可以针对所选接口进行修改。“路由”菜单使审核员可以重新启动DNS。默认情况下，预期的默认网关为172.16.42.42。使用WiFi Pineapple Connector Android应用程序时，IP路由将自动更新以使用usb0作为默认网关。
+                </p>
+                <p>
+                    <b>AP接入点</b> -  可以配置设备开放式AP接入点及相关管理。如:管理AP接入点共享信道，隐藏开放式接入点，禁用管理AP接入点等。
+                </p>
+                <p>
+                    <b>OUI库查询</b> - 此功能允许根据需要查找MAC地址和前缀。OUI Lookup旁边的下拉菜单提供了删除和重置OUI数据库的选项，OUI数据库是Wireshark托管的副本的镜像，可通过<a href="https://wifipineapple.com/oui.txt">wifipineapple.com</a>下载。
+                </p>
+                <p>
+                    <b>WiFi客户端模式</b> - 能够将设备连接到另一个无线AP接入点，以进行Internet或本地网络访问。使用WiFi客户端模式时，IP路由将自动更新以使用所选接口。设备可与许多支持的USB WiFi适配器一起使用，以添加第三个（wlan2）接口。wlan0保留供接入点使用，PineAP需要wlan1，如果使用PineAP守护程序及其后续功能，则WIFI客户端将无法使用。
+                </p>
+                <p>
+                    要连接到附近的AP接入点，请选择所需的接口，然后单击扫描。从“AP访问点”列表中，选择所需连接的网络，如果需要的话输入密码，然后单击“连接”。连接后，将显示设备的IP地址，默认路由将更新为新连接网络的默认路由。单击“断开连接”以断开连接。
+                </p>
+                <p>
+                    <b>MAC地址</b> - 将显示所选中接口的当前MAC地址。可以手动指定新的MAC地址，也可以使用“新建MAC地址”文本字段和“设置新MAC地址”或“设置随机MAC地址”按钮随机设置。MAC地址可以通过MAC地址菜单中的恢复默认MAC地址按钮来重置为默认值。更改MAC地址可能会断开已连接的终端与设备的连接。
+                </p>
+                <p>
+                    <b>高级</b> - 可以通过主机名文本框和更新按钮来更新主机名，使用“高级”菜单按钮中的“重置WiFi配置为默认值”选项重置无线配置，ifconfig的显示输出。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#ConfigurationHelp" data-parent="#accordion">
+            <h4 class="panel-title">配置管理</h4>
+        </div>
+        <div id="ConfigurationHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    “配置”模块视图为审计者提供了配置常规设置和修改登录页面的方法。
+                </p>
+                <p>
+                    <b>常规</b> - 时区的显示及手工设置，系统密码修改，“常规”菜单中可以关闭、重新启动设备或将设备重置为出厂默认。
+                </p>
+                <p>
+                    <b>登录页</b> - 启用登录页后，连接到设备的终端将会被强制转发到登录页面。
+                </p>
+                <p>
+                    <b>按钮脚本</b> - 此功能允许审计者控制按下设备上重置按钮时执行的操作。默认情况下是重新启动的shell脚本，但也可以对其进行修改以更好地满足审计需求。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#AdvancedHelp" data-parent="#accordion">
+            <h4 class="panel-title">高级</h4>
+        </div>
+        <div id="AdvancedHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    
+                </p>
+                <p>
+                    <b>资源</b> - 显示文件系统上磁盘和内存的使用情况。通过“资源”菜单按钮可以删除页面缓存。
+                </p>
+                <p>
+                    <b>USB</b> - 显示已连接的USB外围设备，并允许审计者设置文件系统表（fstab）。可以通过USB菜单按钮格式化SD卡。
+                </p>
+                <p>
+                    <b>CSS</b> - 设备WEB管理界面的CSS样式修改。
+                </p>
+                <p>
+                    <b>API令牌管理</b> - API令牌是一种远程远程访问设备API的身份验证机制，而不需要访问密码。可以在视图上撤消和生成令牌(token)。
+                </p>
+                <p>
+                    <b>创建新Token</b> - 允许审计者安全创建新的API令牌。
+                </p>
+                <p>
+                    <b>固件更新</b> - 显示当前固件版本并允许审计者检查更新。通过互联网访问WiFiPineapple.com，如果固件有可用更新，则会显示更新日志，并且可以使用“执行升级”选项。建议用户仔细阅读与固件升级功能相关的警告。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading pointer" data-toggle="collapse" data-target="#NotesHelp" data-parent="#accordion">
+            <h4 class="panel-title">标记</h4>
+        </div>
+        <div id="NotesHelp" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>
+                    这项功能使审计者可以轻松地在不同的客户端和AP上做标记。 MAC地址也可以打上昵称，使审计员可以很轻松的追踪重要设备，“下载”按钮可以生成一个包含所有标记的JSON文件，刷新可以查看检查新的标记。每个标记的右侧删除按钮允许轻松删除与设备关联的标记和昵称。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

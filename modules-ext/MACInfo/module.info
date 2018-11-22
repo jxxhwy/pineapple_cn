@@ -1,0 +1,10 @@
+{
+    "author": "DJEngineer",
+    "description": "查下MAC地址信息",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "MAC信息",
+    "version": "1.2"
+}

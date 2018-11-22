@@ -1,0 +1,6 @@
+{
+    "title": "dump1090",
+    "version": "1.1",
+    "author": "Whistle Master",
+    "description": "使用dump1090跟踪带有 RST-SDR的 ADS-B信号"
+}

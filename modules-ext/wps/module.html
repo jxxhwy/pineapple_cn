@@ -1,0 +1,573 @@
+<div class="panel panel-default" ng-controller="wps_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row" ng-controller="wps_ControlsController">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+				          <h3 class="panel-title">
+                    控制
+                  </h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+          <tr ng-show="$root.status.installed">
+            <td style="padding-bottom: .5em;" class="text-muted">wps</td>
+            <td style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting || $root.command == '' && status != 'Stop'" ng-click="togglewps()">{{status}}</button></td>
+          </tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">移除依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项将要卸载，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。移除成功后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="panel panel-default" ng-show="$root.status.installed && processes.length">
+        <div class="panel-heading">
+              <h4 class="panel-title">运行中进程</h4>
+        </div>
+        <div style="padding-bottom: 0px;" class="panel-body">
+          <table style="margin-bottom: 0px;" class="table">
+              <thead>
+                <tr>
+                  <th>进程</th>
+                  <th>SSID</th>
+                  <th>MAC</th>
+                  <th>信道</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="proc in processes">
+                  <td>{{ proc.name }}</td>
+                  <td>{{ proc.ssid }}</td>
+                  <td>{{ proc.mac }}</td>
+                  <td>{{ proc.channel }}</td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="wps_OptionsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Options">
+        <h4 class="panel-title">选项</h4>
+    </div>
+    <div id="Options" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">命令</span>
+                  <input type="text" class="form-control input-sm" ng-model="command" placeholder="wps命令">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">程序</span>
+                <select ng-change="update()" ng-model="program" class="form-control input-sm">
+                  <option value="reaver">reaver</option>
+                  <option value="bully">bully</option>
+                </select>
+              </div>
+          </div>
+
+          <div ng-show="program!='--'" class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon input-sm">监控</span>
+              <select ng-change="update()" class="form-control input-sm" ng-disabled="monitors.length == 0" ng-model="selectedMonitor">
+                  <option ng-repeat="monitor in monitors">{{ monitor }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div ng-show="program!='--'" class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">BSSID</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="bssid" placeholder="BSSID">
+              </div>
+          </div>
+
+          <div ng-show="program!='--'" class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">ESSID</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="essid" placeholder="ESSID">
+              </div>
+          </div>
+
+          <div ng-show="program!='--'" class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">信道</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="channel" placeholder="信道">
+              </div>
+          </div>
+
+          <div ng-show="program=='reaver'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#reaverOptions">选项</div>
+              <div id="reaverOptions" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option1" ng-true-value="'-a'"> 自动检测目标AP的最佳高级选项</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option2" ng-true-value="'-A'"> 不与AP关联（关联必须由其他应用程序完成）</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option3" ng-true-value="'-N'"> 收到无序数据包时，不发送NACK消息</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option4" ng-true-value="'-S'"> 使用小型DH key以提高破解速度</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option5" ng-true-value="'-L'"> 忽略目标AP报告的锁定状态</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option6" ng-true-value="'-E'"> 使用EAP FAIL数据包终止每个WPS会话</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option7" ng-true-value="'-n'"> 目标AP总是发送一个NACK [自动]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option8" ng-true-value="'-w'"> 模仿Windows7注册[假的]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option9" ng-true-value="'-X'"> 从会话开始设置详尽模式[假的]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option10" ng-true-value="'-1'"> 设置pin前半部的初始数组索引[假的]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option11" ng-true-value="'-2'"> 设置pin后半部的初始数组索引[假的]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option12" ng-true-value="'-P'"> 设置为PixieLoop模式（不发送M4，并循环到M3）[假的]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option13" ng-true-value="'-H'"> 允许序列完整的PixieHashes日志</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option14" ng-true-value="'-Z'"> 如果pixiewps攻击成功，不运行reaver来自动检索WPA密码</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option15" ng-true-value="'-K 1'"> [1]使用PKE，PKR，E-Hash1，E-Hash2，E-Nonce和Authkey（Ralink，Broadcom和Realtek）运行pixiewps</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option16" ng-true-value="'-vv'"> 显示非严重警告</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option17" ng-true-value="'-vvv'"> 显示PixieHashes/启用pixiedust模式</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="reaverOptions.option18" ng-true-value="'-q'"> 仅显示严重消息</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="program=='reaver'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#reaverAdvancedOptions">高级</div>
+              <div id="reaverAdvancedOptions" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option1.check" ng-true-value="'-d'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option1.val" class="form-control input-sm"><span class="input-group-addon input-sm">设置pin尝试的延迟[1]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option2.check" ng-true-value="'-l'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option2.val" class="form-control input-sm"><span class="input-group-addon input-sm">设置AP锁定WPS pin尝试时等待的时间[60]</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option3.check" ng-true-value="'-g'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option3.val" class="form-control input-sm"><span class="input-group-addon input-sm">在pin尝试次数后退出</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option4.check" ng-true-value="'-x'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option4.val" class="form-control input-sm"><span class="input-group-addon input-sm">设置10次意外失败后的睡眠时间[0]</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option5.check" ng-true-value="'-t'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option5.val" class="form-control input-sm"><span class="input-group-addon input-sm">设置接收超时时间[5]</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option6.check" ng-true-value="'-T'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option6.val" class="form-control input-sm"><span class="input-group-addon input-sm">Set M5/M7超时间隔[0.20]</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option7.check" ng-true-value="'-r'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option7.val" class="form-control input-sm"><span class="input-group-addon input-sm">每尝试pin x次后睡眠y秒</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="reaverAdvancedOptions.option8.check" ng-true-value="'-W'"></span><input type="text" ng-change="update()" ng-model="reaverAdvancedOptions.option8.val" class="form-control"><span class="input-group-addon input-sm">Default Pin Generator by devttys0 team [1] Belkin [2] D-Link</span>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="program=='bully'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#bullyOptions">选项</div>
+              <div id="bullyOptions" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option1" ng-true-value="'-B'"> 猜解WPS pin校验和数字</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option2" ng-true-value="'-F'"> 尽管有警告，但仍继续</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option3" ng-true-value="'-S'"> 顺序pin（不随机）</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option4" ng-true-value="'-T'"> 测试模式(不注入任何包)</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option5" ng-true-value="'-A'"> 禁止对已发送数据包做ACK检查</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option6" ng-true-value="'-C'"> 跳过CRC/FCS验证（性能）</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option7" ng-true-value="'-D'"> 检测AP未报告的WPS锁定</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option8" ng-true-value="'-E'"> EAP失败终止每次交换</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option9" ng-true-value="'-L'"> 忽略AP报告的WPS锁定</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option10" ng-true-value="'-M'"> M5/M7超时视为WSC_NACK</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option11" ng-true-value="'-N'"> 数据包不包含FCS字段</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option12" ng-true-value="'-P'"> 对AP发出的非beacon包使用Probe request</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option13" ng-true-value="'-R'"> 假设存在radiotap头</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option14" ng-true-value="'-W'"> 伪装成Windows 7注册</label></div>
+                        <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="bullyOptions.option15" ng-true-value="'-Z'"> 取消数据包的限制算法</label></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div ng-show="program=='bully'" class="panel panel-default">
+              <div class="panel-heading pointer" data-toggle="collapse" data-target="#bullyAdvancedOptions">高级</div>
+              <div id="bullyAdvancedOptions" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option1.check" ng-true-value="'-i'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option1.val" class="form-control input-sm"><span class="input-group-addon input-sm">起始pin索引（7位或8位）[自动]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option2.check" ng-true-value="'-l'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option2.val" class="form-control input-sm"><span class="input-group-addon input-sm">如果AP锁定WPS等待的秒数[43]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option3.check" ng-true-value="'-p'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option3.val" class="form-control input-sm"><span class="input-group-addon input-sm">起始pin数(7或8位) [自动]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option4.check" ng-true-value="'-v'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option4.val" class="form-control input-sm"><span class="input-group-addon input-sm">详细程度1-3级,1最安静[3]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option5.check" ng-true-value="'-r'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option5.val" class="form-control input-sm"><span class="input-group-addon input-sm">没有收到ack包时重新发送数据包N次[2]</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option6.check" ng-true-value="'-1'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option6.val" class="form-control input-sm"><span class="input-group-addon input-sm">在M5 [0,1]每N秒nack延迟M秒</span>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="input-group">
+                        <span class="input-group-addon input-sm"><input type="checkbox" ng-change="update()" ng-model="bullyAdvancedOptions.option7.check" ng-true-value="'-2'"></span><input type="text" ng-change="update()" ng-model="bullyAdvancedOptions.option7.val" class="form-control input-sm"><span class="input-group-addon input-sm">M7 [5,1]每N秒nack延迟M秒</span>
+                      </div>
+                  </div>
+
+                </div>
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div ng-controller="wps_ScanController">
+
+<div class="panel panel-default" ng-show="$root.status.installed">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Interfaces">
+        <h4 class="panel-title">接口</span></h4>
+    </div>
+    <div id="Interfaces" class="panel-collapse collapse">
+        <div class="panel-body">
+    <form>
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon input-sm">接口</span>
+          <select class="form-control input-sm" ng-disabled="scanning" ng-model="selectedInterface">
+              <option ng-repeat="interface in interfaces">{{ interface }}</option>
+          </select>
+            <span class="input-group-btn">
+                <button class="btn btn-{{startMonLabel}} btn-sm" ng-disabled="scanning || startingMon" ng-click="startMonitor()">{{startMon}}</button>
+            </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon input-sm">监控</span>
+          <select class="form-control input-sm" ng-disabled="scanning || monitors.length == 0" ng-model="selectedMonitor">
+              <option ng-repeat="monitor in monitors">{{ monitor }}</option>
+          </select>
+          <span class="input-group-btn">
+              <button class="btn btn-{{stopMonLabel}} btn-sm" ng-disabled="scanning || stoppingMon || monitors.length == 0" ng-click="stopMonitor()">{{stopMon}}</button>
+          </span>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed">
+  <div class="panel-heading pointer" data-toggle="collapse" data-target="#APs">
+        <h4 class="panel-title">扫描结果 <span class="badge">{{accessPoints.length}}</span></h4>
+    </div>
+    <div id="APs" class="panel-collapse collapse">
+    <div class="panel-body">
+      <form>
+        <div class="form-group form-inline">
+            <button class="btn btn-{{scanLabel}} btn-sm" ng-disabled="scanning" ng-click="scanForNetworks()">{{scan}}</button>
+
+            <select class="form-control input-sm" ng-model="scanDuration" ng-disabled="scanning">
+              <option value="15">15秒</option>
+              <option value="30">30秒</option>
+              <option value="60">1分钟</option>
+              <option value="120">2分钟</option>
+              <option value="300">5分钟</option>
+              <option value="600">10分钟</option>
+            </select>
+
+            <span ng-show="monitors.length == 0" class="text-danger pull-right" style="padding-top: 5px;">警告：网卡必须启用监听模式才能显示WPS信息。</span>
+        </div>
+
+        <div class="form-group">
+          <div class="input-group">
+              <span class="input-group-addon input-sm">搜索</span>
+              <input type="text" class="form-control input-sm" placeholder="在结果中搜索" ng-disabled="(accessPoints.length === 0)" ng-model="search">
+              <div class="input-group-btn">
+                <button class="btn btn-default btn-sm" ng-disabled="(accessPoints.length === 0)" ng-click="clearFilter()">清除过滤</button>
+              </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="table-responsive">
+        <table class="table" ng-hide="(accessPoints.length === 0)">
+          <thead>
+            <tr>
+              <th>
+                <a class="pointer" ng-click="sortType = 'ssid'; sortReverse = !sortReverse">SSID
+                <span ng-show="sortType == 'ssid' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'ssid' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'mac'; sortReverse = !sortReverse">MAC
+                <span ng-show="sortType == 'mac' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'mac' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'encryption'; sortReverse = !sortReverse">加密
+                <span ng-show="sortType == 'encryption' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'encryption' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'cipher'; sortReverse = !sortReverse">Cipher
+                <span ng-show="sortType == 'cipher' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'cipher' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'auth'; sortReverse = !sortReverse">Auth
+                <span ng-show="sortType == 'auth' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'auth' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'channel'; sortReverse = !sortReverse">信道
+                <span ng-show="sortType == 'channel' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'channel' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'frequency'; sortReverse = !sortReverse">频率
+                <span ng-show="sortType == 'frequency' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'frequency' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'signal'; sortReverse = !sortReverse">信号
+                <span ng-show="sortType == 'signal' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'signal' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'quality'; sortReverse = !sortReverse">质量
+                <span ng-show="sortType == 'quality' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'quality' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+              <th>
+                <a class="pointer" ng-click="sortType = 'wps'; sortReverse = !sortReverse">WPS
+                <span ng-show="sortType == 'wps' && !sortReverse" class="caret pointer"></span>
+                <span ng-show="sortType == 'wps' && sortReverse" class="dropup"><span class="caret pointer"></span></span>
+                </a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="(id, accessPoint) in accessPoints | orderBy:sortType:sortReverse | filter:search" ng-click="target(accessPoint)" class="pointer">
+              <td class="autoselect">
+                <span class="text-muted" ng-hide="accessPoint.ssid"><i>隐藏</i></span>
+                {{ accessPoint.ssid }}
+                <hook-button hook="ssid" content="accessPoint.ssid"></hook-button>
+              </td>
+              <td class="autoselect">
+                <button type="button" class="btn btn-default btn-xs" ng-click="getMACInfo(accessPoint.mac)" data-toggle="modal" data-target="#infoModal">{{accessPoint.mac}}</button>
+                <hook-button hook="mac" content="accessPoint.mac"></hook-button>
+              </td>
+              <td>{{ accessPoint.encryption }}</td>
+              <td>{{ accessPoint.cipher }}</td>
+              <td>{{ accessPoint.auth }}</td>
+              <td>{{ accessPoint.channel }}</td>
+              <td>{{ accessPoint.frequency }} Ghz</td>
+              <td>{{ accessPoint.signal }}</td>
+              <td class="{{ accessPoint.qualityLabel }}">{{ accessPoint.quality }}%</td>
+              <td class="{{ accessPoint.wpsLabel }}">{{ accessPoint.wps }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="well" ng-show="(accessPoints.length === 0)">无扫描结果...</div>
+
+    </div>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModal">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="infoModalLabel">{{title}}</h4>
+          </div>
+          <div class="modal-body">
+            <pre class="scrollable-pre log-pre">{{output}}</pre>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info" data-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="wps_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			自动刷新 <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshOutput()">刷新日志</button><div class="clearfix"></div>
+		<pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="wps_HistoryController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#History">
+        <h4 class="panel-title">历史记录 <span class="badge">{{history.length}}</span></h4>
+    </div>
+    <div id="History" class="panel-collapse collapse">
+        <div class="panel-body">
+	        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshHistory()">刷新历史记录</button><div class="clearfix"></div>
+			<div class="table-responsive">
+	            <table class="table table-striped table-bordered table-hover" ng-hide="(history.length == 0)">
+	                <thead>
+	                    <tr>
+	                        <th>日期</th>
+	                        <th>操作</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="entry in history" ng-if="entry != ''">
+	                        <td>{{entry[0]}}</td>
+	                        <td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-fixed-length btn-sm btn-default" data-toggle="modal" data-target="#historyModal" ng-click="viewHistory(entry[1])">查看</button>
+									<button type="button" class="btn btn-sm btn-default" ng-click="downloadHistory(entry[1])">下载</button>
+                  <button type="button" class="btn btn-fixed-length btn-sm btn-danger" ng-click="deleteHistory(entry[1])">删除</button>
+								</div>
+							</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+			<div class="well" ng-show="(history.length === 0)">无历史记录...</div>
+        </div>
+    </div>
+
+	<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="historyModalLabel">查看历史记录 - {{historyDate}}</h4>
+	      </div>
+	      <div class="modal-body">
+	      <pre class="scrollable-pre log-pre">{{historyOutput}}</pre>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>

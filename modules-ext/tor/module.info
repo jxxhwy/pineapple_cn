@@ -1,0 +1,7 @@
+{
+    "author":"catatonicprime",
+    "description":"将设备连接到网络，管理隐藏的服务等",
+    "devices": [ "nano", "tetra" ],
+    "title":"洋葱路由",
+    "version":"1.0"
+}

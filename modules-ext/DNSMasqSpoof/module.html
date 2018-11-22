@@ -1,0 +1,122 @@
+<div class="panel panel-default" ng-controller="DNSMasqSpoof_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="DNSMasqSpoof_ControlsController">
+            <div class="panel-heading">
+				          <h3 class="panel-title">控制</h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+					<tr class="form-inline" ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">DNSMasq欺骗</td>
+						<td style="text-align:right;padding-bottom: .5em;">
+              <button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting" ng-click="toggleDNSMasqSpoof()">{{status}}</button>
+            </td>
+					</tr>
+					<tr ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">启动时运行</td>
+						<td style="text-align:right;padding-bottom: .5em;">
+							<div class="btn-group">
+								<button ng-click="toggleDNSMasqSpoofOnBoot()" class="btn btn-xs btn-{{bootLabelON}}">开</button>
+								<button ng-click="toggleDNSMasqSpoofOnBoot()" class="btn btn-xs btn-{{bootLabelOFF}}">关</button>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">卸载依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有依赖项将删除，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="DNSMasqSpoof_HostsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Hosts">
+        <h4 class="panel-title">主机</h4>
+    </div>
+    <div id="Hosts" class="panel-collapse collapse">
+        <div class="panel-body">
+			<button type="submit" class="btn btn-{{saveConfigurationLabel}} btn-sm pull-right" ng-disabled="saving" ng-click="saveConfigurationData()">{{saveConfiguration}}</button><div class="clearfix"></div>
+			<form class="form-horizontal">
+                <textarea class="form-control" rows="20" ng-model="configurationData"></textarea>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="DNSMasqSpoof_LandingPageController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#LandingPage">
+        <h4 class="panel-title">登录页面</h4>
+    </div>
+    <div id="LandingPage" class="panel-collapse collapse">
+        <div class="panel-body">
+			<button type="submit" class="btn btn-{{saveConfigurationLabel}} btn-sm pull-right" ng-disabled="saving" ng-click="saveConfigurationData()">{{saveConfiguration}}</button><div class="clearfix"></div>
+			<form class="form-horizontal">
+                <textarea class="form-control" rows="20" ng-model="configurationData"></textarea>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="DNSMasqSpoof_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			自动刷新 <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="input-group pull-right">
+            	<button class="btn btn-primary btn-sm" ng-click="refreshOutput()">刷新日志</button>
+        </div>
+        <div class="clearfix"></div>
+		<pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>

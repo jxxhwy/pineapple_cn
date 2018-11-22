@@ -1,0 +1,10 @@
+{
+    "author": "trashbo4t",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "定位",
+    "description": "通过HTTPS ipapi定位IP地理位置",
+    "version": "1.0"
+}

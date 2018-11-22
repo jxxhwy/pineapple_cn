@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "显示管理已连接的客户端",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "客户端管理",
+    "version": "1.0",
+    "index": 3
+}

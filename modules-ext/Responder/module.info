@@ -1,0 +1,6 @@
+{
+    "title": "应答器",
+    "version": "1.0",
+    "author": "Whistle Master",
+    "description": "应答器使用LLMNR、NBT-NS、MDNS对HTTP,SMB,MSSQL,FTP和LDAP流氓认证服务器投毒"
+}

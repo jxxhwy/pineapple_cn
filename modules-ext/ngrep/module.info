@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "使用ngrep匹配数据网络上的数据包",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "ngrep",
+    "version": "1.5"
+}

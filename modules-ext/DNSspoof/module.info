@@ -1,0 +1,6 @@
+{
+    "title": "DNS欺骗",
+    "version": "1.3",
+    "author": "Whistle Master",
+    "description": "使用DNSspoof伪造对任意DNS查询的回复"
+}

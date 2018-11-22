@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "仪表盘界面",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "仪表盘",
+    "version": "1.0",
+    "index": 1
+}

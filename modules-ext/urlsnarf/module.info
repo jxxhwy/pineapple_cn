@@ -1,0 +1,6 @@
+{
+    "title": "urlsnarf",
+    "version": "1.4",
+    "author": "Whistle Master",
+    "description": "输出所有使用urlsnarf从http流量中嗅探出的url请求"
+}

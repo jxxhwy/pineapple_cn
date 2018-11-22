@@ -1,0 +1,11 @@
+{
+    "author": "Hak5",
+    "description": "下载新的社区模块，系统模块更新。",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "模块管理",
+    "version": "1.2"
+}

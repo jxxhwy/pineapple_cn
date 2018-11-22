@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "使用p0f进行静态流量监听",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "p0f",
+    "version": "1.1"
+}

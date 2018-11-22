@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "系统资源、固件等信息",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "高级",
+    "version": "1.0",
+    "index": 12
+}

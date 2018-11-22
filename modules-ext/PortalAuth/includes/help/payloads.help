@@ -1,0 +1,16 @@
+<strong>Payload模板</strong><br />
+单击每个按钮将会下载文件，以构建与Payloader注入集可交互式的有效Payload。
+<br /><br />
+
+<strong>管理Payloads</strong><br />
+本部分允许您上载和删除有效Payload。 默认情况下，nginx中存在上传限制，可能导致上传失败,如果它们超过一定的大小。 单击“配置上载限制”链接以配置nginx以允许上载最多20M。有效Payload上传后，它们会根据文件类型自动存储在适当的位置。
+<br /><br />
+<ul>
+<li>.exe => /www/download/windows/</li>
+<li>.bat => /www/download/windows/</li>
+<li>.zip => /www/download/osx/</li>
+<li>.ipk => /www/download/android/</li>
+<li>.ipa => /www/download/ios/</li>
+</ul>
+<br />
+*请记住.tar.gz文件被视为注入集并加以存储。

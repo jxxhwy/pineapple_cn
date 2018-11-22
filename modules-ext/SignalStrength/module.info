@@ -1,0 +1,6 @@
+{
+    "title": "信号强度",
+    "description": "显示在范围内的无线单元的信号强度。可用于物理定位",
+    "version": "1.0",
+    "author": "r3dfish"
+}

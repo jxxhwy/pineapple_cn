@@ -1,0 +1,10 @@
+{
+    "author": "Sebkinne",
+    "description": "可已浏览器中查看HTTP url,cookie,POST数据和图片信息",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "绵羊墙",
+    "version": "1.2"
+}

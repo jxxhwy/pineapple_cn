@@ -1,0 +1,10 @@
+{
+    "author": "sud0nick",
+    "description": "生成或管理TLS/SSL和SSH证书",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "Papers",
+    "version": "1.5"
+}

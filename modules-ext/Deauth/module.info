@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "对连接到附近AP的所有设备Deauth攻击",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "Deauth攻击",
+    "version": "1.5"
+}

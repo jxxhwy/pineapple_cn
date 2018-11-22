@@ -1,0 +1,115 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12" ng-controller="DWallController">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading pointer" data-toggle="collapse" data-target="#settings">
+                            <h3 class="panel-title">
+                                绵羊墙设置
+                            </h3>
+                        </div>
+                        <div id="settings" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <p class="text-strong">
+                                    绵羊墙当前： <span ng-if="running">正在运行</span><span ng-if="!running">未运行</span>。
+                                </p>
+                                <button class="btn btn-default btn-sm" ng-if="!running" ng-click="enableDWall()">运行</button>
+                                <button class="btn btn-default btn-sm" ng-if="running" ng-click="disableDWall()">禁止</button>
+                                <button class="btn btn-default btn-sm" ng-if="running && !listening && !throbber" ng-click="startWS()">开始监听</button>
+                                <button class="btn btn-default btn-sm" ng-if="running && listening" ng-click="stopWS()">停止监听</button>
+                                <img src="/img/throbber.gif" ng-if="throbber">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading pointer" data-toggle="collapse" data-target="#url">
+                            <h3 class="panel-title">
+                                URL列表
+                            </h3>
+                        </div>
+                        <div id="url" class="panel-collapse collapse in table-responsive" style="max-height: 300px">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>客户端</th>
+                                        <th>URL</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="url_table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading pointer" data-toggle="collapse" data-target="#cookie">
+                            <h3 class="panel-title">
+                                Cookie信息
+                            </h3>
+                        </div>
+                        <div id="cookie" class="panel-collapse collapse in table-responsive" style="max-height: 300px">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>客户端</th>
+                                        <th>Cookie</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cookie_table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading pointer" data-toggle="collapse" data-target="#post">
+                            <h3 class="panel-title">
+                                数据
+                            </h3>
+                        </div>
+                        <div id="post" class="panel-collapse collapse in table-responsive" style="max-height: 300px">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>客户端</th>
+                                        <th>数据</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="post_table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading pointer" data-toggle="collapse" data-target="#images">
+                    <h3 class="panel-title">
+                        图片
+                    </h3>
+                </div>
+                <div id="images" class="panel-collapse collapse in">
+                    <div class="panel-body" id="img_container" style="overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

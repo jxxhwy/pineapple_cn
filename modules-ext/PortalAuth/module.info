@@ -1,0 +1,10 @@
+{
+    "author": "sud0nick",
+    "description": "门户克隆和均衡负载",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "Portal认证",
+    "version": "1.6"
+}

@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "管理常规设置和目标网页",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "配置管理",
+    "version": "1.0",
+    "index": 11
+}

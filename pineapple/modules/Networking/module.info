@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "路由表、AP、MAC地址、主机名相关的修改",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "网络管理",
+    "version": "1.1",
+    "index": 10
+}

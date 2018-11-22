@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "PineAP是一个无线渗透解决方案",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "PineAP",
+    "version": "1.9",
+    "index": 6
+}

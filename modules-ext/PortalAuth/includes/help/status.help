@@ -1,0 +1,6 @@
+<strong>克隆Portal</strong><br />
+仅在检测到强制Portal时可见，单击时将会显示用于克隆Portal的选项菜单。
+<br /><br />
+<strong>依赖项</strong><br />
+唯一需要的依赖是curl。
+<br />

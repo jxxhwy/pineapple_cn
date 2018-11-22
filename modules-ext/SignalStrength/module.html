@@ -1,0 +1,110 @@
+<script type="text/javascript" src="/modules/SignalStrength/js/Chart.min.js"></script>
+<div ng-controller="SignalStrengthController">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="pull-left">{{title}}</h4>
+			<h4 class="pull-right">v{{version}}</h4>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+	<div class="row">
+	<div class="col-md-6">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="pull-left">扫描设置</h4>
+			<span class="pull-right">持续:
+				<div class="btn-group">
+					<button class="btn btn-xs btn-{{(continuousScan == true) ? 'success' : 'default'}}" ng-click="toggleContinuous()">开</button>
+					<button class="btn btn-xs btn-{{(continuousScan == false) ? 'danger' : 'default'}}" ng-click="toggleContinuous()">关</button>
+				</div>
+			</span>
+			<div class="clearfix"></div>
+		</div>
+		<div id="ScanSettings">
+			<table class="table text-center">
+			<tr>
+				<td>
+				<select class="form-control input-sm" ng-model="selectedInterface">
+					<option ng-repeat="interface in interfaces">{{ interface }}</option>
+				</select>
+				</td>
+				<td>
+				<img src="img/throbber.gif" ng-show="scanLoading">
+				</td>
+				<td>
+				<button type="button" class="btn btn-success" ng-click="scanInterface()" ng-disabled="scanLoading">扫描</button>
+				</td>
+			</tr>
+			<tr ng-repeat="status in interfaceStatus">
+				<td>
+					<p>{{ status.interface }}</p>
+				</td>
+				<td></td>
+				<td>
+					<div class="btn-group">
+						<button class="btn btn-xs btn-{{(status.status=='Up') ? 'success' : 'default'}}" ng-click="toggleInterface(status.interface, status.status)">启动</button>
+						<button class="btn btn-xs btn-{{(status.status=='Down') ? 'danger' : 'default'}}" ng-click="toggleInterface(status.interface, status.status)">禁用</button>
+					</div>
+				</td>
+			</tr>
+			</table>
+		</div>
+	</div>
+	</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading pointer" data-toggle="collapse" data-target="#ScanResultsTable">
+			<h4 class="pull-left">扫描结果</h4>
+			<span class="pull-right"><img src="img/throbber.gif" ng-show="scanLoading"></span>
+			<div class="clearfix"></div>
+		</div>
+		<div id="ScanResultsTable" class="panel-collapse collapse in">
+			<table class="table table-striped table-bordered text-center">
+				<tr><th class="text-center">MAC地址</th><th class="text-center">信道</th><th class="text-center">质量</th><th class="text-center">信号强度</th><th class="text-center">ESSID</th></tr>
+				<tr ng-repeat="target in interfaceScan track by $index"><td>{{ target['bssid'] }}</td><td>{{ target['channel'] }}</td><td>{{ target['quality'] }}</td><td>{{ target['strength'] }}</td><td>{{ target['essid'] }}</td></tr>
+			</table>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading pointer" data-toggle="collapse" data-target="#ScanResultsGraph">
+			<h4 class="pull-left">信号级别图表</h4>
+			<span class="pull-right"><img src="img/throbber.gif" ng-show="scanLoading"></span>
+			<div class="clearfix"></div>
+		</div>
+		<div id="ScanResultsGraph" class="panel-collapse collapse in">
+			<canvas id="polar-area" class="chart chart-polar-area" chart-data="chartdata" chart-labels="chartlabels" chart-legend="true"></canvas>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading pointer" data-toggle="collapse" data-target="#AboutDiv">
+			<h4 class="pull-left">关于</h4>
+			<div class="clearfix"></div>
+		</div>
+		<div id="AboutDiv" class="panel-body panel-collapse collapse out">
+			<p>信号强度工具是利用'iwlist [interface] scanning'命令来收集范围内的信号强度和质量信息</p>
+			<p><b>连续扫描</b> 允许执行扫描的功能以递归方式运行，允许在每个接口能够执行扫描的时间间隔内不断刷新数据。从测试来看，wlan0似乎有更快的刷新时间，但是没有像wlan1那样多的范围。要停止连续扫描，只需切换连续按钮并等待当前正在执行的扫描完成。</p>
+			<p><b>信号级别图表</b> 利用信号强度属性来图形化分析。信号强度以dBm为单位，会产生负值。为了正确地绘制该值，将dBm读数增加100以产生正值，这使得每个单元之间的信号强度的准确比较为正数，从而允许其正确地绘制图形。因此图形中的数字基于信号强度dBm读数，但其本身并不重要。</p>
+			<p><b>将来改进:</b></p>
+			<ul>
+				<li>能够改变图标类型(极地图, 柱状图, 曲线图)</li>
+				<li>具有一致颜色的单元格，当图形刷新时，单元格保持相同的颜色</li>
+				<li>能够专注于单个信号单元，以便根据信号强度更容易物理定位</li>
+			</ul>
+			<p><b>更新日志</b></p>
+			<p>V1.0: 初始化发布</p>
+		</div>
+	</div>
+</div>
+
+<script>
+function refreshChart() {
+	if(window.myPolarArea!==undefined)
+		window.myPolarArea.destroy();
+	var polarData = $('[ng-controller="SignalStrengthController"]').scope().polarData;
+	var ctx = document.getElementById("polar-area").getContext("2d");
+	window.myPolarArea = new Chart(ctx).PolarArea(polarData, {
+		responsive:true,
+		animation:false
+	});
+}
+</script>

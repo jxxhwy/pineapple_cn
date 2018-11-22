@@ -1,0 +1,10 @@
+{
+    "author": "3ndG4me",
+    "description": "OpenVPN连接工具",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "OpenVPN连接工具",
+    "version": "1.1"
+}

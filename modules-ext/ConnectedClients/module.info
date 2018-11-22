@@ -1,0 +1,6 @@
+{
+    "title": "已连接客户端",
+    "description": "显示当前连接的客户端，DHCP租约和黑名单管理。",
+    "version": "1.4",
+    "author": "r3dfish"
+}

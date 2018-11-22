@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "将Hash和WPA握手包提交至www.onlinehashcrack.com网站服务",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "在线哈希破解",
+    "version": "1.2"
+}

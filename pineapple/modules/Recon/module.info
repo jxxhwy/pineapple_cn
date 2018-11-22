@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "WIF网络概览",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "侦查",
+    "version": "1.3",
+    "index": 2
+}

@@ -1,0 +1,10 @@
+{
+    "author": "Whistle Master",
+    "description": "使用tcpdump监听网络流量",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "tcpdump",
+    "version": "1.5"
+}

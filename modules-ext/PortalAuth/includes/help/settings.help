@@ -1,0 +1,12 @@
+<h4 style='text-align: center'>如果您点击<strong>使用默认</strong>按钮，Portal Auth将使用sud0nick个人服务器来检查强制Portal。</h4><br />
+
+<strong>测试站点</strong><br />
+输入一个互联网web站点URL,这是Portal认证将尝试访问的站点，以确定强制Portal是否阻断您的连接。此字段还可用于克隆指定URL站点。
+<br /><br />
+
+<strong>预期数据</strong><br />
+您希望Portal认证在访问测试网站时获得的数据，建议您将这些设置保留为默认值，因为它们已经过测试。如果您更改它们，请确保您准确的知道来自测试网站的数据，否则您将会收到误报。
+<br /><br />
+
+<strong>Portal归档</strong><br />
+存储门户的位置。如果您希望能够在Evil Portal II中看到您的门户，那么您必须使用 /sd/portals/ 或者 /root/portals/<br /><strong>*ALWAYS*</strong> 目录已左斜杠结束 (/). 如果不这样做，将无法找到存档位置。

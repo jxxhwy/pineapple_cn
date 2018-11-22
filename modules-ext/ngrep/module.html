@@ -1,0 +1,258 @@
+<div class="panel panel-default" ng-controller="ngrep_Controller"><div class="panel-heading"><h4 class="panel-title pull-left">{{title}}</h4><span class="pull-right">{{version}}</span><div class="clearfix"></div></div></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default" ng-controller="ngrep_ControlsController">
+            <div class="panel-heading">
+				<h3 class="panel-title">控制</h3>
+            </div>
+			<div class="panel-body">
+				<table style="width:100%">
+					<tr>
+						<td style="padding-bottom: .5em;" class="text-muted">依赖项</td>
+            <td ng-hide="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesInstallModal" ng-disabled="processing">{{install}}</button></td>
+            <td ng-show="$root.status.installed" style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{installLabel}} btn-xs" data-toggle="modal" data-target="#dependenciesRemoveModal" ng-disabled="processing">{{install}}</button></td>
+					</tr>
+					<tr ng-show="$root.status.installed">
+						<td style="padding-bottom: .5em;" class="text-muted">ngrep</td>
+						<td style="text-align:right;padding-bottom: .5em;"><button type="button" style="width: 90px;" class="btn btn-{{statusLabel}} btn-xs" ng-disabled="starting" ng-click="togglengrep()">{{status}}</button></td>
+					</tr>
+				</table>
+			</div>
+
+      <div class="modal fade" id="dependenciesInstallModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesInstallModalLabel">安装依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有必需的依赖项必须首先安装，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" ng-click="handleDependencies('internal')" data-dismiss="modal">内部存储</button>
+              <button type="button" class="btn btn-info" ng-hide="device == 'tetra' || sdAvailable == false" ng-click="handleDependencies('sd')" data-dismiss="modal">SD卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="dependenciesRemoveModal" tabindex="-1" role="dialog" aria-labelledby="dependenciesModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="dependenciesRemoveModalLabel">卸载依赖项</h4>
+            </div>
+            <div class="modal-body">
+              所有依赖项将删除，这可能需要几分钟的时间。<br /><br />
+              请稍候，请不要离开或刷新此页面。安装完成后，此页面将会自动刷新。
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-info" ng-click="handleDependencies()" data-dismiss="modal">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="ngrep_OptionsController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Options">
+        <h4 class="panel-title">选项</h4>
+    </div>
+    <div id="Options" class="panel-collapse collapse">
+	    <div class="panel-body">
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">命令</span>
+                  <input type="text" class="form-control input-sm" ng-model="command" placeholder="ngrep命令">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">接口</span>
+                  <select ng-change="update()" ng-model="selectedInterface" class="form-control input-sm">
+                      <option>--</option>
+                      <option ng-repeat="interface in interfaces">{{ interface }}</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">用户配置</span>
+                <select class="form-control input-sm" ng-change="update()" ng-model="selectedProfile" >
+                  <option ng-repeat="profile in profiles track by profile.text" ng-value="profile.value">{{ profile.text }}</option>
+                </select>
+              </div>
+          </div>
+
+          <div ng-show="selectedProfile=='--'" class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">过滤器</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="filter" placeholder="过滤器">
+              </div>
+          </div>
+
+          <div ng-show="selectedProfile=='--'" class="form-group">
+              <div class="input-group">
+                  <span class="input-group-addon input-sm">表达式</span>
+                  <input ng-change="update()" type="text" class="form-control input-sm" ng-model="expression" placeholder="表达式">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon input-sm">格式</span>
+                <select ng-change="update()" ng-model="format" class="form-control input-sm">
+                  <option>--</option>
+                  <option value="-W normal">normal</option>
+                  <option value="-W byline">byline</option>
+                  <option value="-W single">single</option>
+                  <option value="-W none">none</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <div class="input-group">
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option1" ng-true-value="'-q'"> 安静（不打印数据包接收哈希标记）</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option2" ng-true-value="'-e'"> 显示空包</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option3" ng-true-value="'-i'"> 忽略大小写</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option4" ng-true-value="'-v'"> 反转匹配</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option5" ng-true-value="'-R'"> Don't do privilege revocation logic</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option6" ng-true-value="'-x'"> 以16进制格式显示</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option7" ng-true-value="'-X'"> 以16进制格式匹配</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option8" ng-true-value="'-w'"> 整字匹配 </label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option9" ng-true-value="'-p'"> 不使用混杂模式</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option10" ng-true-value="'-t'"> 在每个匹配的包之前显示时间戳</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option11" ng-true-value="'-T'"> 显示上一个匹配的数据包之间的时间间隔</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option12" ng-true-value="'-M'"> 仅进行单行匹配</label></div>
+                <div class="checkbox"><label><input type="checkbox" ng-change="update()" ng-model="options.option13" ng-true-value="'-N'"> 显示由IANA定义的子协议号</label></div>
+              </div>
+          </div>
+
+	    </div>
+	</div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="ngrep_EditorController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#Editor">
+        <h4 class="panel-title">编辑</h4>
+    </div>
+    <div id="Editor" class="panel-collapse collapse">
+      <div class="panel-body">
+
+          <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon input-sm">用户配置</span>
+                <select class="form-control input-sm" ng-change="showProfile()" ng-model="selectedProfile" >
+                  <option ng-repeat="profile in profiles track by profile.text">{{ profile.text }}</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon input-sm">名称</span>
+                <input type="text" class="form-control input-sm" ng-disabled="selectedProfile != '--'" ng-model="profileName" placeholder="新配置名称">
+            </div>
+          </div>
+
+          <div class="form-group">
+              <div class="btn-group pull-right">
+                <button class="btn btn-{{saveProfileLabel}} btn-sm" ng-disabled="saving || profileName == ''" ng-click="saveProfileData()">{{saveProfile}}</button>
+                <button class="btn btn-{{deleteProfileLabel}} btn-sm" ng-disabled="deleting || selectedProfile == '--'" ng-click="deleteProfileData()">{{deleteProfile}}</button>
+              </div>
+              <div class="clearfix"></div>
+              <textarea class="form-control" rows="20" ng-model="profileData"></textarea>
+          </div>
+
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="ngrep_OutputController">
+	<div class="panel-heading">
+        <h4 class="panel-title pull-left">输出</h4>
+		<div class="pull-right">
+			Auto-refresh <div class="btn-group">
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelON}}">开</button>
+			<button ng-click="toggleAutoRefresh()" class="btn btn-xs btn-{{refreshLabelOFF}}">关</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon input-sm">过滤器</span>
+            <input type="text" class="form-control input-sm" placeholder="用于管道命令的过滤输出（例如grep，awk）" ng-model="filter">
+            <div class="input-group-btn">
+              <button class="btn btn-default btn-sm" ng-click="clearFilter()">清除过滤器</button>
+              <button class="btn btn-primary btn-sm" ng-click="refreshOutput()">刷新日志</button>
+            </div>
+        </div>
+    <pre class="scrollable-pre log-pre">{{output}}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$root.status.installed" ng-controller="ngrep_HistoryController">
+    <div class="panel-heading pointer" data-toggle="collapse" data-target="#History">
+        <h4 class="panel-title">历史记录 <span class="badge">{{history.length}}</span></h4>
+    </div>
+    <div id="History" class="panel-collapse collapse">
+        <div class="panel-body">
+	        <button class="btn btn-primary btn-sm pull-right" ng-click="refreshHistory()">刷新历史记录</button><div class="clearfix"></div>
+			<div class="table-responsive">
+	            <table class="table table-striped table-bordered table-hover" ng-hide="(history.length == 0)">
+	                <thead>
+	                    <tr>
+	                        <th>日期</th>
+	                        <th>操作</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="entry in history" ng-if="entry != ''">
+	                        <td>{{entry[0]}}</td>
+	                        <td>
+								<div class="btn-group">
+                  <button type="button" class="btn btn-fixed-length btn-sm btn-default" data-toggle="modal" data-target="#historyModal" ng-click="viewHistory(entry[1])">查看</button>
+                  <button type="button" class="btn btn-sm btn-default" ng-click="downloadHistory(entry[1])">下载日志</button>
+                  <button type="button" class="btn btn-sm btn-default" ng-click="downloadHistory(entry[2])">下载pcap文件</button>
+									<button type="button" class="btn btn-fixed-length btn-sm btn-danger" ng-click="deleteHistory(entry[2])">删除</button>
+								</div>
+							</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+			<div class="well" ng-show="(history.length === 0)">无历史记录...</div>
+        </div>
+    </div>
+
+	<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="historyModalLabel">查看历史记录 - {{historyDate}}</h4>
+	      </div>
+	      <div class="modal-body">
+	      <pre class="scrollable-pre log-pre">{{historyOutput}}</pre>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>

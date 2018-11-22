@@ -1,0 +1,10 @@
+{
+    "author": "Foxtrot",
+    "description": "这个模块允许任意的用户端强制连接到这个wifipineapple",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "title": "RandomRoll",
+    "version": "1.2"
+}

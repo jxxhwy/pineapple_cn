@@ -1,0 +1,12 @@
+{
+    "author": "Hak5",
+    "description": "管理和查看各种日志",
+    "devices": [
+        "nano",
+        "tetra"
+    ],
+    "system": true,
+    "title": "日志",
+    "version": "1.1",
+    "index": 8
+}
